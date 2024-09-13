@@ -16,12 +16,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        operText.text = "";
-        resultvalue = 0;
-        isint = true;
-        algebra = "none";
-        isoperate = false;
-        result.text = "";
+        Reset();
     }
 
     public void ChangeOper(string op)
@@ -45,12 +40,13 @@ public class GameManager : MonoBehaviour
                     break;
                 case "per":
                     resultvalue /= int.Parse(op);
+                    resultvalue = (int)resultvalue;
                     break;
             }
         }
         else
         {
-            switch(op)
+            switch (op)
             {
                 case "+":
                     algebra = "plus";
@@ -77,7 +73,17 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isoperate)
+        if (isoperate)
             result.text = " = " + resultvalue.ToString();
+    }
+
+    public void Reset()
+    {
+        operText.text = "";
+        resultvalue = 0;
+        isint = true;
+        algebra = "none";
+        isoperate = false;
+        result.text = "";
     }
 }

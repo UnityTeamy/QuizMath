@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Operatevalue : MonoBehaviour
 {
-    public GameObject gm;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +18,6 @@ public class Operatevalue : MonoBehaviour
 
     public void Clicked()
     {
-        gm.gameObject.GetComponent<GameManager>().isoperate = true;
+        GameManager.Instance.isoperate = true;
     }
 }
