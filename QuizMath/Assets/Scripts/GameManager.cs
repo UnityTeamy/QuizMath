@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public bool isint;
     string algebra;
     public bool isoperate;
+    public Otherview otherview;
 
     void Awake()
     {
@@ -63,6 +64,10 @@ public class GameManager : MonoBehaviour
             }
         }
         isint = !isint;
+        if (otherview.ismaster)
+            otherview.operatingstate = operText.text;
+        else
+            otherview.otheroperatingstate = operText.text;
     }
 
     /*void OnClick()
@@ -75,6 +80,13 @@ public class GameManager : MonoBehaviour
     {
         if (isoperate)
             result.text = " = " + resultvalue.ToString();
+            if (otherview.ismaster)
+                otherview.Answer = resultvalue.ToString();
+            else
+                otherview.otherAnswer = resultvalue.ToString();
+            isoperate = false;
+        
+
     }
 
     public void Reset()

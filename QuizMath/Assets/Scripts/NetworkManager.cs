@@ -15,6 +15,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public int n;
 
     public PhotonView PV;
+    public int targetnumber;
+    public string operatingstate;
+    public string Answer;
 
     // Start is called before the first frame update
     void Start()
