@@ -11,18 +11,23 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     //public InputField field;
     public TextMeshProUGUI log;
     public TextMeshProUGUI list;
+    public TextMeshProUGUI text;
+    public int n;
+
+    public PhotonView PV;
 
     // Start is called before the first frame update
     void Start()
     {
-        Screen.SetResolution(540, 960, false);
+        Screen.SetResolution(960, 600, false);
         PhotonNetwork.ConnectUsingSettings();
+        n = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        text.text = n.ToString();
     }
 
     public override void OnConnectedToMaster()
@@ -33,6 +38,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         //PhotonNetwork.
         Debug.Log("Joined");
+        log.text = "joined!";
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -43,5 +49,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             list.text += "\n";
             list.text += PhotonNetwork.PlayerList[i].NickName;
         }
+    }
+    
+    public void OnClick()
+    {
+        function();
+    }
+
+    void function()
+    {
+        PV.RPC("Changevalue", RpcTarget.Others);
+    }
+
+    [PunRPC]
+    void Changevalue()
+    {
+        n += 1;
     }
 }
