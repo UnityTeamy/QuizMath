@@ -20,6 +20,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public string Answer;
     bool isconnected;
 
+    public TextMeshProUGUI targettext;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,9 +46,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //PhotonNetwork.
         Debug.Log("Joined");
         log.text = "joined!";
-        if(!PhotonNetwork.MasterClient.IsLocal)
+        if(!PhotonNetwork.MasterClient.IsMasterClient) //islocal·Î ÇÔ
         {
             isconnected = true;
+        }
+        else
+        {
+            targetnumber = Random.Range(0, 1000);
         }
     }
 
@@ -59,6 +65,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             list.text += "\n";
             list.text += PhotonNetwork.PlayerList[i].NickName;
         }
+        targettext.text = targetnumber.ToString();
+        //settarget(targetnumber.ToString(), false);
+        PV.RPC("settarget", RpcTarget.Others, targetnumber.ToString(), false);
     }
     
     public void OnClick()
@@ -79,8 +88,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     
     public void retext()
     {
-        if(isconnected)
+        if (isconnected)
             PV.RPC("rt", RpcTarget.Others);
+        else
+            Debug.LogError("not connected");
+        Debug.LogError("operated");
+    }
+
+    public void Retarget()
+    {
+        if(PhotonNetwork.MasterClient.IsMasterClient)
+        {
+            targetnumber = Random.Range(0, 1000);
+            targettext.text = targetnumber.ToString();
+            //settarget(targetnumber.ToString(), false);
+            PV.RPC("settarget", RpcTarget.Others, targetnumber.ToString(), false);
+        }
+        else
+        {
+            //settarget("notarget", true);
+            PV.RPC("settarget", RpcTarget.Others, "notarget", true);
+        }
     }
 
     [PunRPC]
@@ -93,7 +121,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Change(string A)
     {
         GameManager.Instance.ChangeOper(A, false);
-        GameManager.Instance.showotherresult(GameManager.Instance.resultvalue.ToString());
+        //GameManager.Instance.showotherresult(GameManager.Instance.resultvalue.ToString());
+        showresult(GameManager.Instance.resultvalue.ToString());
     }
 
     [PunRPC]
@@ -101,4 +130,34 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameManager.Instance.Resettext();
     }
+
+    [PunRPC]
+    void settarget(string target, bool ishost)
+    {
+        if (!ishost)
+        {
+            targettext.text = target;
+            //Debug.LogError("targeted");
+            targetnumber = int.Parse(target);
+        }
+        else
+        {
+            targetnumber = Random.Range(0, 1000);
+            targettext.text = targetnumber.ToString();
+            //settarget(targetnumber.ToString(), false);
+            PV.RPC("settarget", RpcTarget.Others, targetnumber.ToString(), false);
+        }
+    }
+
+    [PunRPC]
+    void showresult(string result)
+    {
+        GameManager.Instance.result.text = result;
+    }
+
+    /*[PunRPC]
+    void set()
+    {
+
+    }*/
 }

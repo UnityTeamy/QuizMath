@@ -6532,6 +6532,7 @@ MonoBehaviour:
   targetnumber: 0
   operatingstate: 
   Answer: 
+  targettext: {fileID: 1220687701}
 --- !u!4 &1258849068
 Transform:
   m_ObjectHideFlags: 0

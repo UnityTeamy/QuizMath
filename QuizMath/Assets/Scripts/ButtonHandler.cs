@@ -23,6 +23,7 @@ public class ButtonHandler : MonoBehaviour
     {
         if((isnumberbutton && GameManager.Instance.isnumber) || (!isnumberbutton && !GameManager.Instance.isnumber))
             GameManager.Instance.ChangeOper(text, true);
+            //PV.RPC("settarget", RpcTarget.Others, targetnumber.ToString(), false);
     }
 
     // Update is called once per frame

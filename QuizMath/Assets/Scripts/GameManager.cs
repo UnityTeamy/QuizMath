@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
         otheroperText.text = "";
         otherresult.text = "";
         isnumber = true;
+        StartCoroutine("Wait");
+        //Debug.Log("Waited");
     }
 
     public void ChangeOper(string op, bool isowner)
@@ -87,6 +89,7 @@ public class GameManager : MonoBehaviour
             }
             //isint = !isint;
             nw.Changetext(op);
+            //PV.RPC("settarget", RpcTarget.Others, op);
             /*if (otherview.ismaster)
                 otherview.operatingstate = operText.text;
             else
@@ -112,7 +115,22 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (isoperate)
+        {
             result.text = " = " + resultvalue.ToString();
+            if(resultvalue.ToString() == nw.targettext.text)
+            {
+                nw.targettext.text = "Correct!";
+                nw.Retarget();
+            }
+            else
+            {
+                nw.targettext.text = "Wrong!";
+                StartCoroutine("Wait");
+                //Debug.Log("Waited");
+                nw.targettext.text = nw.targetnumber.ToString();
+                Reset();
+            }
+        }
             /*if (otherview.ismaster)
                 otherview.Answer = resultvalue.ToString();
             else
@@ -137,13 +155,18 @@ public class GameManager : MonoBehaviour
 
     public void Resettext()
     {
-        operText.text = "";
-        resultvalue = 0;
+        otheroperText.text = "";
+        //resultvalue = 0;
         //isint = true;
-        isnumber = true;
-        algebra = "none";
-        isoperate = false;
-        result.text = "";
+        //isnumber = true;
+        //algebra = "none";
+        //isoperate = false;
+        otherresult.text = "";
         //SceneManager.LoadScene(0);
+    }
+
+    IEnumerable Wait()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 }
