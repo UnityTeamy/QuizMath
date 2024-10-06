@@ -18,6 +18,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public int targetnumber;
     public string operatingstate;
     public string Answer;
+    bool isconnected;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +26,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Screen.SetResolution(960, 600, false);
         PhotonNetwork.ConnectUsingSettings();
         n = 0;
+        isconnected = false;
     }
 
     // Update is called once per frame
@@ -42,10 +44,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //PhotonNetwork.
         Debug.Log("Joined");
         log.text = "joined!";
+        if(!PhotonNetwork.MasterClient.IsLocal)
+        {
+            isconnected = true;
+        }
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+        isconnected = true;
         list.text = "connected";
         for(int i  = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
@@ -64,9 +71,34 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PV.RPC("Changevalue", RpcTarget.Others);
     }
 
+    public void Changetext(string A)
+    {
+        //¤»¤»PV.RPC("Change", RpcTarget.Others, "A", "B");
+        PV.RPC("Change", RpcTarget.Others, A);
+    }
+    
+    public void retext()
+    {
+        if(isconnected)
+            PV.RPC("rt", RpcTarget.Others);
+    }
+
     [PunRPC]
     void Changevalue()
     {
         n += 1;
+    }
+
+    [PunRPC]
+    void Change(string A)
+    {
+        GameManager.Instance.ChangeOper(A, false);
+        GameManager.Instance.showotherresult(GameManager.Instance.resultvalue.ToString());
+    }
+
+    [PunRPC]
+    void rt()
+    {
+        GameManager.Instance.Resettext();
     }
 }

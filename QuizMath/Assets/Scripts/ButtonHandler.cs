@@ -9,6 +9,7 @@ public class ButtonHandler : MonoBehaviour
     TextMeshProUGUI textUI;
     Button btn;
     string text;
+    public bool isnumberbutton;
     // Start is called before the first frame update
     void Awake()
     {
@@ -20,7 +21,8 @@ public class ButtonHandler : MonoBehaviour
 
     void Click()
     {
-        GameManager.Instance.ChangeOper(text);
+        if((isnumberbutton && GameManager.Instance.isnumber) || (!isnumberbutton && !GameManager.Instance.isnumber))
+            GameManager.Instance.ChangeOper(text, true);
     }
 
     // Update is called once per frame
