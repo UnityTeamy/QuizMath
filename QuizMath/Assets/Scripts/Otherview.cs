@@ -128,7 +128,9 @@ public class Otherview : MonoBehaviourPunCallbacks, IPunObservable
                 issend = false;
                 //isreading = !isreading;
             }
-            //target.text += "not reading";
+            //target.text += "
+            //
+            //reading";
         }
     }
 

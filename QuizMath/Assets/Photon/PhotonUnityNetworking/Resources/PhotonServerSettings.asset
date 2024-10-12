@@ -46,6 +46,8 @@ MonoBehaviour:
   - rt
   - settarget
   - showresult
+  - correct
+  - win
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

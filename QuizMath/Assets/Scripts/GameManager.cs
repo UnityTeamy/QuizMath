@@ -20,6 +20,12 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI otherresult;
     public bool isnumber;
 
+    public TextMeshProUGUI Correctioncount;
+    public TextMeshProUGUI OtherCorrectioncount;
+    int Count;
+    public int OtherCount;
+
+
     void Awake()
     {
         Instance = this;
@@ -29,6 +35,8 @@ public class GameManager : MonoBehaviour
         isnumber = true;
         StartCoroutine("Wait");
         //Debug.Log("Waited");
+        Count = OtherCount = 0;
+        Correctioncount.text = OtherCorrectioncount.text = "Correction : 0";
     }
 
     public void ChangeOper(string op, bool isowner)
@@ -98,12 +106,14 @@ public class GameManager : MonoBehaviour
         else
         {
             otheroperText.text += op + " ";
+            // Debug.LogError("false");
         }
+        // Debug.LogError("false or true");
     }
 
     public void showotherresult(string result)
     {
-        otherresult.text = result;
+        otherresult.text = " = " + result;
     }
 
     /*void OnClick()
@@ -120,7 +130,21 @@ public class GameManager : MonoBehaviour
             if(resultvalue.ToString() == nw.targettext.text)
             {
                 nw.targettext.text = "Correct!";
-                nw.Retarget();
+                StartCoroutine("Wait");
+                //nw.Retarget();
+                Count++;
+                Correctioncount.text = "Correct : " + Count.ToString();
+                if (Count >= 3)
+                {
+                    nw.targettext.text = "Win!";
+                    nw.Win();
+                    StartCoroutine("Stop");
+                }
+                else
+                {
+                    nw.Retarget();
+                }
+                //nw.targettext.text = "Correct!";
             }
             else
             {
@@ -167,6 +191,12 @@ public class GameManager : MonoBehaviour
 
     IEnumerable Wait()
     {
+        yield return new WaitForSeconds(2.0f);
+    }
+
+    IEnumerable Stop()
+    {
         yield return new WaitForSeconds(0.5f);
+        Time.timeScale = 0f;
     }
 }
