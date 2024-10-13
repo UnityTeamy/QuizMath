@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 //using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -28,12 +29,14 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        //StartCoroutine(Wait(3));
+        //SceneManager.LoadScene(0);
         Instance = this;
-        Reset();
+        Reset(true);
         otheroperText.text = "";
         otherresult.text = "";
         isnumber = true;
-        StartCoroutine("Wait");
+        //StartCoroutine(Wait(1));
         //Debug.Log("Waited");
         Count = OtherCount = 0;
         Correctioncount.text = OtherCorrectioncount.text = "Correction : 0";
@@ -130,7 +133,7 @@ public class GameManager : MonoBehaviour
             if(resultvalue.ToString() == nw.targettext.text)
             {
                 nw.targettext.text = "Correct!";
-                StartCoroutine("Wait");
+                //StartCoroutine(Wait(2, "correct"));
                 //nw.Retarget();
                 Count++;
                 Correctioncount.text = "Correct : " + Count.ToString();
@@ -138,21 +141,23 @@ public class GameManager : MonoBehaviour
                 {
                     nw.targettext.text = "Win!";
                     nw.Win();
-                    StartCoroutine("Stop");
+                    //StartCoroutine("Stop");
+                    Stop();
                 }
                 else
                 {
-                    nw.Retarget();
+                    StartCoroutine(Wait(2, "correct"));
+                    //nw.Retarget();
                 }
                 //nw.targettext.text = "Correct!";
             }
             else
             {
                 nw.targettext.text = "Wrong!";
-                StartCoroutine("Wait");
+                StartCoroutine(Wait(2, "wrong"));
                 //Debug.Log("Waited");
-                nw.targettext.text = nw.targetnumber.ToString();
-                Reset();
+                //nw.targettext.text = nw.targetnumber.ToString();
+                //Reset(false);
             }
         }
             /*if (otherview.ismaster)
@@ -164,7 +169,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void Reset()
+    public void Reset(bool istrue)
     {
         operText.text = "";
         resultvalue = 0;
@@ -174,7 +179,7 @@ public class GameManager : MonoBehaviour
         isoperate = false;
         result.text = "";
         //SceneManager.LoadScene(0);
-        nw.retext();
+        nw.retext(istrue);
     }
 
     public void Resettext()
@@ -189,14 +194,27 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(0);
     }
 
-    IEnumerable Wait()
+    IEnumerator Wait(int time, string s)//rator가 아니구나!
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSecondsRealtime(time);
+        if (s == "correct")
+            nw.Retarget();
+        else if (s == "wrong")
+        {
+            nw.targettext.text = nw.targetnumber.ToString();
+            Reset(false);
+        }
+        else
+            SceneManager.LoadScene(0);
     }
 
-    IEnumerable Stop()
+    //IEnumerable Stop()
+    void Stop()
     {
-        yield return new WaitForSeconds(0.5f);
-        Time.timeScale = 0f;
+        //yield return new WaitForSeconds(0.5f);
+        //Time.timeScale = 0f;
+        //yield return new WaitForSeconds(3.0f);
+        StartCoroutine(Wait(3, "restart"));
+        //SceneManager.LoadScene(0);
     }
 }

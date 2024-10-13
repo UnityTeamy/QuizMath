@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -22,11 +23,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public TextMeshProUGUI targettext;
 
+    public GameObject gamePanel;
+    public GameObject introPanel;
+
+    public TextMeshProUGUI timer;
+    public TextMeshProUGUI ConnectionText;
+
     // Start is called before the first frame update
     void Start()
     {
+        gamePanel.SetActive(false);
+        introPanel.SetActive(true);
         Screen.SetResolution(960, 600, false);
-        PhotonNetwork.ConnectUsingSettings();
+        ConnectionText.text = "Thank you for visiting";
+        //PhotonNetwork.ConnectUsingSettings();
         n = 0;
         isconnected = false;
     }
@@ -40,16 +50,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinOrCreateRoom("Room", new RoomOptions { MaxPlayers = 2 }, null);
+        //ConnectionText.text = "Waiting..";
     }
     public override void OnJoinedRoom()
     {
         //PhotonNetwork.
         Debug.Log("Joined");
         log.text = "joined!";
+        ConnectionText.text = "Waiting..";
         //Debug.LogError(PhotonNetwork.IsMasterClient);
-        if(!PhotonNetwork.LocalPlayer.IsMasterClient) //islocal로 함 //MasterClient.으로 함
+        if (!PhotonNetwork.LocalPlayer.IsMasterClient) //islocal로 함 //MasterCl
+                                                       //nt.으로 함
         {
             isconnected = true;
+            //Startgame();
+            //StartCoroutine(Wait(3));
+            Timer(3);
         }
         else
         {
@@ -61,6 +77,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         isconnected = true;
+        //Startgame();
+        //GameManager.Instance.StartCoroutine(Wait(3));
+        Timer(3);
         list.text = "connected";
         for(int i  = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
@@ -91,11 +110,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PV.RPC("Change", RpcTarget.Others, A);
     }
     
-    public void retext()
+    public void retext(bool isfirst)
     {
         if (isconnected)
             PV.RPC("rt", RpcTarget.Others);
-        else
+        else if(!isfirst)
             Debug.LogError("not connected");
         //Debug.LogError("operated");
     }
@@ -120,6 +139,48 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void Win()
     {
         PV.RPC("win", RpcTarget.Others);
+    }
+    public void Startgame()
+    {
+        gamePanel.SetActive(true);
+        introPanel.SetActive(false);
+        //PhotonNetwork.ConnectUsingSettings();
+    }
+    public void EnterRoom(GameObject button)
+    {
+        //StartCoroutine(Wait(3));
+        //SceneManager.LoadScene(0);
+        PhotonNetwork.ConnectUsingSettings();
+        button.gameObject.SetActive(false);
+        ConnectionText.text = "Connecting..";
+        //SceneManager.LoadScene(0);
+    }
+    
+     IEnumerator Timer(int second)
+    {
+        //if (second != 100)
+        //{
+            ConnectionText.text = "Connected";
+            for (int i = second; i > 0; i--)
+            {
+                timer.text = i.ToString();
+                yield return new WaitForSecondsRealtime(1);
+            }
+            Startgame();
+        //}
+        /*else
+        {
+            //yield return new WaitForSeconds(3.0f);
+            StartCoroutine(Wait(3));
+            SceneManager.LoadScene(0);
+        }*/
+    }
+
+    IEnumerator Wait(int time, bool restart)
+    {
+        yield return new WaitForSecondsRealtime(time);
+        if(restart)
+            SceneManager.LoadScene(0);
     }
 
     [PunRPC]
@@ -183,7 +244,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void win()
     {
+        //GameManager.Instance.OtherCount = 3;
+        correct();
         targettext.text = "Lose..";
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
+        //wait(100);
+        StartCoroutine(Wait(3,true));
+        //SceneManager.LoadScene(0);
     }
 }
