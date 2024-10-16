@@ -65,11 +65,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             isconnected = true;
             //Startgame();
             //StartCoroutine(Wait(3));
-            Timer(3);
+            // 바보 휴지
+            // Timer(3);
+            StartCoroutine(Timer(3));
         }
         else
         {
+            Debug.Log("connectexxx"); // 이게 실행됨
             targetnumber = Random.Range(0, 1000);
+            // targetnumber는 뭐하는 애냐.
         }
         //if(PhotonNetwork.IsMasterClient)
     }
@@ -79,7 +83,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         isconnected = true;
         //Startgame();
         //GameManager.Instance.StartCoroutine(Wait(3));
-        Timer(3);
+        // Timer(3);
+        Debug.Log("OnplayerEnteredRoom timer 작동");
+        StartCoroutine(Timer(3));
         list.text = "connected";
         for(int i  = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
@@ -99,7 +105,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //Debug.LogError(PhotonNetwork.LocalPlayer.IsMasterClient);
     }
 
-    void function()
+    void function() // 누가 함수 이름을 함수로 짓냐..
     {
         PV.RPC("Changevalue", RpcTarget.Others);
     }
@@ -156,17 +162,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         //SceneManager.LoadScene(0);
     }
     
-     IEnumerator Timer(int second)
+    IEnumerator Timer(int second)
     {
         //if (second != 100)
         //{
-            ConnectionText.text = "Connected";
-            for (int i = second; i > 0; i--)
-            {
-                timer.text = i.ToString();
-                yield return new WaitForSecondsRealtime(1);
-            }
-            Startgame();
+        ConnectionText.text = "Connected";
+        for (int i = second; i > 0; i--)
+        {
+            timer.text = i.ToString();
+            Debug.Log("Timer timer 작동");
+            yield return new WaitForSecondsRealtime(second);
+        }
+        Startgame();
         //}
         /*else
         {
